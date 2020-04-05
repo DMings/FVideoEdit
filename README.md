@@ -1,5 +1,5 @@
 ## FVideoEdit
-FVideoEdit视频编辑器演示
+FVideoEdit视频编辑器演示，由于功能尚未开发完整，暂不开源
 
 - 可下载看看 [演示apk](https://github.com/DMings/FVideoEdit/blob/master/FvideoEdit.apk)
 
