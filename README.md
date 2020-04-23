@@ -1,7 +1,12 @@
 ## FVideoEdit
-FVideoEdit视频编辑器演示，计划上架Google Play，暂不开源
+FVideoEdit视频编辑器演示，计划发布，暂不开源
 
 - 可下载看看,v7 debug apk仅8.58M [演示apk](https://github.com/DMings/FVideoEdit/blob/master/FvideoEdit.apk)
+
+### 真实项目
+
+![项目截图](https://github.com/DMings/FVideoEdit/blob/master/preview.png)
+![项目截图2](https://github.com/DMings/FVideoEdit/blob/master/preview2.png)
 
 ### 下面为演示GIF，若网络过慢，请耐心等待。更多项目可查看本github
 
