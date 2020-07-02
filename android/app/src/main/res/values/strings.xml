@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FVideoEditor</string>
+    <string name="ve_show_request_permission">Requires access to external storage</string>
+    <string name="ve_show_request_never_permission">Need to access external storage permissions otherwise it won\'t work</string>
+    <string name="ve_warning">Warning</string>
+    <string name="ve_quit">Quit</string>
+    <string name="ve_confirm">OK</string>
+    <string name="ve_cancel">Cancel</string>
+    <string name="ve_delete">Delete</string>
+    <string name="ve_save">Save</string>
+    <string name="ve_has_select">%1$d selected</string>
+    <string name="ve_delete_tip">This operation will delete the source file, please exercise caution</string>
+    <string name="ve_720_recommend">720P(Recommend)</string>
+    <string name="ve_create_video_size">Generate video size</string>
+    <string name="ve_chang_video_stop">Video conversion terminated</string>
+    <string name="ve_continue_cancel">Cancelling</string>
+    <string name="ve_video_save">Video save path：</string>
+    <string name="ve_change_video_progress">Convert video...%1$d%%</string>
+    <string name="ve_change_video_ing">Convert video...</string>
+    <string name="ve_cancel_video_change">Cancel video conversion?</string>
+    <string name="ve_play_miss_error">Play error</string>
+    <string name="ve_play_complex_error">Video encoding is too complicated</string>
+    <string name="ve_error">Error</string>
+    <string name="ve_cut_must_more_0_5">Crop time must be greater than 0.5 seconds</string>
+    <string name="ve_edit">Edit</string>
+    <string name="ve_change_video">Convert</string>
+    <string name="ve_change_video_progress_0">Convert video...0%</string>
+    <string name="ve_cut_center">Cut both sides</string>
+    <string name="ve_cut_two_side">Cut middle</string>
+    <string name="ve_cut_lr">Split</string>
+    <string name="ve_cut">Crop</string>
+    <string name="ve_stroke_screen">Frameless</string>
+    <string name="ve_full_screen">Full</string>
+    <string name="ve_blur_screen">Frame</string>
+    <string name="ve_pad_screen">Pad</string>
+    <string name="ve_has_no_enough_storage">Not enough storage to save</string>
+    <string name="ve_import_video_failed">%1$d video import failed</string>
+    <string name="ve_create_time">Create Time:&#160;</string>
+    <string name="ve_file_info">File Info:&#160;</string>
+    <string name="ve_file_path">File Path:&#160;</string>
+    <string name="ve_file_resolution">&#160;Resolution&#160;</string>
+    <string name="ve_file_size">&#160;Size&#160;</string>
+    <string name="ve_file_time">&#160;Duration&#160;</string>
+</resources>

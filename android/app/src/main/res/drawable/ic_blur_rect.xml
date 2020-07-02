@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true"
+        android:drawable="@drawable/ic_blur_light_rect"/>
+    <item android:drawable="@drawable/ic_blur_dark_rect"/>
+</selector>

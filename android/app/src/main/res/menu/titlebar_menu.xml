@@ -1,0 +1,17 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.kongqw.myapplication.MainActivity">
+
+<!--    <item-->
+<!--        android:id="@+id/action_confirm_item"-->
+<!--        android:orderInCategory="90"-->
+<!--        android:icon="@drawable/ic_cancel"-->
+<!--        android:title=""-->
+<!--        app:showAsAction="ifRoom" />-->
+    <item
+        android:id="@+id/action_confirm_item"
+        android:orderInCategory="90"
+        android:title="@string/ve_save"
+        app:showAsAction="ifRoom" />
+</menu>

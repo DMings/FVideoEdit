@@ -1,0 +1,201 @@
+package com.videoeditor.downloader.intubeshot.video.gl;
+
+import android.content.Context;
+import android.opengl.GLES11Ext;
+import android.opengl.GLES20;
+import android.opengl.Matrix;
+
+import com.videoeditor.downloader.intubeshot.R;
+import com.videoeditor.downloader.intubeshot.utils.FLog;
+
+import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
+
+public class BlurFilter {
+
+    private final ShortBuffer mIndexSB;
+    private FloatBuffer mTexFB;
+    private final FloatBuffer mFBOTexFB;
+    private FloatBuffer mPosFB;
+    private FloatBuffer mFBOPosFB;
+    private static final short[] VERTEX_INDEX = {
+            0, 1, 3,
+            2, 3, 1
+    };
+    private int mOESProgram;
+    private int mOESImageTexture;
+    private int mOESPosition;
+    private int mOESTextureCoordinate;
+    private int mOESIsVertical;
+    private int mOESMatrix;
+    // FBO
+    private int[] mFrameBuffer = new int[1];
+    private int[] mFrameBufferTexture = new int[1];
+    private boolean isCreateFBO = false;
+    private int mFBOWidth;
+    private int mFBOHeight;
+    //
+    private float[] mIdentityMatrix = new float[4 * 4];
+    //
+    private int mProgram;
+    private int mImageTexture;
+    private int mPosition;
+    private int mTextureCoordinate;
+    private int mIsVertical;
+    private int mMatrix;
+    //
+    private int mWidth;
+    private int mHeight;
+    private float[] mTexCoordinate = new float[8];
+
+    public BlurFilter(Context context) {
+        mIndexSB = ShaderHelper.arrayToShortBuffer(VERTEX_INDEX);
+        mOESProgram = ShaderHelper.loadProgram(context, R.raw.process_ver, R.raw.blur_frg);
+        mOESPosition = GLES20.glGetAttribLocation(mOESProgram, "inputPosition");
+        mOESTextureCoordinate = GLES20.glGetAttribLocation(mOESProgram, "inputTextureCoordinate");
+        mOESImageTexture = GLES20.glGetUniformLocation(mOESProgram, "inputImageOESTexture");
+        mOESIsVertical = GLES20.glGetUniformLocation(mOESProgram, "isVertical");
+        mOESMatrix = GLES20.glGetUniformLocation(mOESProgram, "inputMatrix");
+
+        mProgram = ShaderHelper.loadProgram(context, R.raw.process_ver, R.raw.n_blur_frg);
+        mPosition = GLES20.glGetAttribLocation(mProgram, "inputPosition");
+        mTextureCoordinate = GLES20.glGetAttribLocation(mProgram, "inputTextureCoordinate");
+        mImageTexture = GLES20.glGetUniformLocation(mProgram, "inputImageTexture");
+        mIsVertical = GLES20.glGetUniformLocation(mProgram, "isVertical");
+        mMatrix = GLES20.glGetUniformLocation(mProgram, "inputMatrix");
+        mPosFB = ShaderHelper.arrayToFloatBuffer(new float[]{
+                -1, 1.0f, 0f,
+                -1, -1.0f, 0f,
+                1, -1.0f, 0f,
+                1, 1.0f, 0f,
+        });
+        mFBOPosFB = ShaderHelper.arrayToFloatBuffer(new float[]{
+                -1, 1.0f, 0f,
+                -1, -1.0f, 0f,
+                1, -1.0f, 0f,
+                1, 1.0f, 0f,
+        });
+        mTexFB = ShaderHelper.arrayToFloatBuffer(new float[]{
+                0, 1,
+                0, 0,
+                1, 0,
+                1, 1,
+        });
+        mFBOTexFB = ShaderHelper.arrayToFloatBuffer(new float[]{
+                0, 1,
+                0, 0,
+                1, 0,
+                1, 1,
+        });
+        Matrix.setIdentityM(mIdentityMatrix, 0);
+    }
+
+    public void onDraw(int textureId, float[] verMatrix, float[] texCoordinate, int x, int y, int width, int height) {
+        if (width == 0 ||
+                height == 0 ||
+                width != mWidth ||
+                height != mHeight) {
+            mWidth = width;
+            mHeight = height;
+            isCreateFBO = createFBO(width, height);
+        }
+        if (FGLUtils.isNotSame(mTexCoordinate, texCoordinate)) {
+            System.arraycopy(texCoordinate, 0, mTexCoordinate, 0, mTexCoordinate.length);
+            mTexFB = ShaderHelper.arrayToFloatBuffer(mTexCoordinate);
+        }
+        if (isCreateFBO) {
+            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBuffer[0]);
+            drawOES(textureId, 0, 0, mFBOWidth, mFBOHeight);
+            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+            draw(mFrameBufferTexture[0], verMatrix, x, y, width, height);
+        } else {
+            drawOES(textureId, x, y, width, height);
+        }
+    }
+
+    private void draw(int textureId, float[] verMatrix, int x, int y, int width, int height) {
+        GLES20.glUseProgram(mProgram);
+        GLES20.glEnableVertexAttribArray(mPosition);
+        GLES20.glVertexAttribPointer(mPosition, 3,
+                GLES20.GL_FLOAT, false, 0, mPosFB);
+        GLES20.glEnableVertexAttribArray(mTextureCoordinate);
+        GLES20.glVertexAttribPointer(mTextureCoordinate, 2,
+                GLES20.GL_FLOAT, false, 0, mTexFB);
+        GLES20.glUniformMatrix4fv(mMatrix, 1, false, verMatrix, 0);
+        GLES20.glUniform1i(mIsVertical, 0);
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId);
+        GLES20.glUniform1i(mImageTexture, 0);
+        GLES20.glViewport(x, y, width, height);
+        GLES20.glDrawElements(GLES20.GL_TRIANGLES, VERTEX_INDEX.length,
+                GLES20.GL_UNSIGNED_SHORT, mIndexSB);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+        GLES20.glDisableVertexAttribArray(mPosition);
+        GLES20.glDisableVertexAttribArray(mTextureCoordinate);
+        GLES20.glDisableVertexAttribArray(mImageTexture);
+        GLES20.glUseProgram(0);
+    }
+
+    private void drawOES(int textureId, int x, int y, int width, int height) {
+        GLES20.glUseProgram(mOESProgram);
+        GLES20.glEnableVertexAttribArray(mOESPosition);
+        GLES20.glVertexAttribPointer(mOESPosition, 3,
+                GLES20.GL_FLOAT, false, 0, mFBOPosFB);
+        GLES20.glEnableVertexAttribArray(mOESTextureCoordinate);
+        GLES20.glVertexAttribPointer(mOESTextureCoordinate, 2,
+                GLES20.GL_FLOAT, false, 0, mFBOTexFB);
+        GLES20.glUniformMatrix4fv(mOESMatrix, 1, false, mIdentityMatrix, 0);
+        GLES20.glUniform1i(mOESIsVertical, 1);
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, textureId);
+        GLES20.glUniform1i(mOESImageTexture, 0);
+        GLES20.glViewport(x, y, width, height);
+        GLES20.glDrawElements(GLES20.GL_TRIANGLES, VERTEX_INDEX.length,
+                GLES20.GL_UNSIGNED_SHORT, mIndexSB);
+        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, 0);
+        GLES20.glDisableVertexAttribArray(mOESPosition);
+        GLES20.glDisableVertexAttribArray(mOESTextureCoordinate);
+        GLES20.glDisableVertexAttribArray(mOESImageTexture);
+        GLES20.glUseProgram(0);
+    }
+
+    private boolean createFBO(int width, int height) {
+        mFBOWidth = width;
+        mFBOHeight = height;
+        GLES20.glGenFramebuffers(1, mFrameBuffer, 0);
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBuffer[0]);
+        GLES20.glGenTextures(1, mFrameBufferTexture, 0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mFrameBufferTexture[0]);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, width, height, 0,
+                GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
+        GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0,
+                GLES20.GL_TEXTURE_2D, mFrameBufferTexture[0], 0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+        if (GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER) != GLES20.GL_FRAMEBUFFER_COMPLETE) {
+            GLES20.glDeleteFramebuffers(1, mFrameBuffer, 0);
+            GLES20.glDeleteTextures(1, mFrameBufferTexture, 0);
+            FLog.e("create framebuffer failed");
+            return false;
+        }
+//        DLog.i("Java create framebuffer success: (" +
+//                width + ", " + height + "), FB: " + mFrameBuffer[0] + " , Tex: " + mFrameBufferTexture[0]);
+        return true;
+    }
+
+    public void onDestroy() {
+        GLES20.glDeleteProgram(mOESProgram);
+        if (isCreateFBO) {
+            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBuffer[0]);
+            GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER,
+                    GLES20.GL_COLOR_ATTACHMENT0, GLES11Ext.GL_TEXTURE_EXTERNAL_OES, 0, 0);
+            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+            GLES20.glDeleteFramebuffers(1, mFrameBuffer, 0);
+            GLES20.glDeleteTextures(1, mFrameBufferTexture, 0);
+        }
+    }
+}

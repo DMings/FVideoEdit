@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="colorPrimary">#FFFFFF</color>
+    <color name="colorPrimaryDark">#FFFFFF</color>
+    <color name="colorAccent">#32B378</color>
+
+    <color name="colorTransparent">#00FFFFFF</color>
+
+    <color name="colorProgressSecond">#C1E1D3</color>
+
+    <color name="colorRed">#FF3B30</color>
+
+    <color name="startMainBackgroundColor">#6632B378</color>
+    <color name="endMainBackgroundColor">#FFFFFF</color>
+    <color name="backgroundColor">#F2F2F2</color>
+    <color name="floatButtonNormal">#999999</color>
+
+    <color name="colorWhite">#FFFFFFFF</color>
+    <color name="colorBlack">#FF000000</color>
+    <color name="colorBodyText">#444444</color>
+    <color name="colorCancelText">#666666</color>
+
+    <color name="colorText">#333333</color>
+
+    <color name="colorBackArrow">#333333</color>
+</resources>

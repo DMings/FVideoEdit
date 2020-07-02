@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="140dp"
+    android:background="#fff"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_cancel"
+            android:layout_width="60dp"
+            android:layout_height="45dp"
+            android:layout_alignParentLeft="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:padding="15dp"
+            android:src="@drawable/ic_cancel" />
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tl_cut_mode"
+            android:layout_width="270dp"
+            android:layout_height="45dp"
+            android:layout_centerHorizontal="true"
+            app:tabMaxWidth="70dp"
+            app:tabMinWidth="70dp"
+            app:tabRippleColor="#e2e2e2"
+            app:tabSelectedTextColor="#333"
+            android:theme="@style/ToolbarTheme"
+            app:tabTextAppearance="@style/TabLayoutTextStyle"
+            app:tabTextColor="#666">
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ve_cut_two_side" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ve_cut_center" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ve_cut_lr" />
+        </com.google.android.material.tabs.TabLayout>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_commit"
+            android:layout_width="60dp"
+            android:layout_height="45dp"
+            android:layout_alignParentRight="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:padding="10dp"
+            android:src="@drawable/ic_has_check" />
+    </RelativeLayout>
+
+    <com.videoeditor.downloader.intubeshot.frame.edit.EditFrameLinearLayout
+        android:id="@+id/ll_frame"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:paddingTop="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="25dp" />
+</LinearLayout>

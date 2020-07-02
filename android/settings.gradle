@@ -1,0 +1,2 @@
+include ':app',":ijkplayer-java", ':cmd-v8a', ':cmd-v7a'
+rootProject.name='VideoEditor'
